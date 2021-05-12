@@ -20,6 +20,8 @@ if [ "$1" = "adult" ]; then
     kaggle datasets download wenruliu/adult-income-dataset
     unzip adult-income-dataset.zip
     rm adult-income-dataset.zip
+elif [ "$1" = "cervical" ]; then
+    wget https://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv
 elif [ "$1" = "nhanes" ]; then
     wget https://raw.githubusercontent.com/semerj/NHANES-diabetes/master/data/diabetes_data_train.csv
     wget https://raw.githubusercontent.com/semerj/NHANES-diabetes/master/data/diabetes_data_test.csv
