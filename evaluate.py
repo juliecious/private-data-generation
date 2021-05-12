@@ -227,7 +227,6 @@ if opt.downstream_task == "classification":
              'Bagging',
              'GBM',
              'MLP',
-             'XgBoost'
              ]
 
     learners.append((LogisticRegression()))
@@ -240,7 +239,6 @@ if opt.downstream_task == "classification":
     learners.append((BaggingClassifier()))
     learners.append((GradientBoostingClassifier()))
     learners.append((MLPClassifier(early_stopping=True)))
-    learners.append((GradientBoostingRegressor()))
 
     print("\nAUC scores of downstream classifiers on test data:")
     for i in range(0, len(learners)):
@@ -256,6 +254,14 @@ if opt.downstream_task == "classification":
     auc_score = roc_auc_score(y_test, pred_probs)
     print('-' * 40)
     print(f'Linear SVM: {round(auc_score, 4)}')
+    print('-' * 40)
+
+    model = GradientBoostingRegressor()
+    model.fit(X_syn, y_syn)
+    pred_probs = model.predict(X_test)
+    auc_score = roc_auc_score(y_test, pred_probs)
+    print('-' * 40)
+    print(f'XgBoost: {round(auc_score, 4)}')
     print('-' * 40)
 
 else:
