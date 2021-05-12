@@ -25,8 +25,7 @@ from sklearn.metrics import roc_auc_score, mean_squared_error
 from sklearn import preprocessing
 from scipy.special import expit
 
-from models import dp_wgan, pate_gan, ron_gauss
-from models.Private_PGM import private_pgm
+from models import dp_wgan, pate_gan
 import argparse
 import numpy as np
 import pandas as pd
@@ -84,17 +83,7 @@ parser_pate_gan.add_argument('--teacher-iters', type=int, default=5, help="Teach
 parser_pate_gan.add_argument('--student-iters', type=int, default=5, help="Student iterations during training per generator iteration")
 parser_pate_gan.add_argument('--num-moments', type=int, default=100, help="Number of higher moments to use for epsilon calculation for pate-gan")
 
-parser_ron_gauss = subparsers.add_parser('ron-gauss', parents=[privacy_parser])
-
-parser_pgm = subparsers.add_parser('private-pgm', parents=[privacy_parser])
-
 parser_real_data = subparsers.add_parser('real-data')
-
-parser_imle = subparsers.add_parser('imle', parents=[privacy_parser, noisy_sgd_parser])
-parser_imle.add_argument('--decay-step', type=int, default=25)
-parser_imle.add_argument('--decay-rate', type=float, default=1.0)
-parser_imle.add_argument('--staleness', type=int, default=5, help="Number of iterations after which new synthetic samples are generated")
-parser_imle.add_argument('--num-samples-factor', type=int, default=10, help="Number of synthetic samples generated per real data point")
 
 parser_dp_wgan = subparsers.add_parser('dp-wgan', parents=[privacy_parser, noisy_sgd_parser])
 parser_dp_wgan.add_argument('--clamp-lower', type=float, default=-0.01, help="Clamp parameter for wasserstein GAN")
@@ -158,58 +147,11 @@ elif opt.model == 'dp-wgan':
                                               clip_coeff=opt.clip_coeff, sigma=opt.sigma, class_ratios=class_ratios, lr=
                                               5e-5, num_epochs=opt.num_epochs), private=opt.enable_privacy)
 
-elif opt.model == 'ron-gauss':
-    model = ron_gauss.RONGauss(z_dim, opt.target_epsilon, opt.target_delta, conditional)
-
-elif opt.model == 'imle':
-    Hyperparams = collections.namedtuple(
-        'Hyperarams',
-        'lr batch_size micro_batch_size sigma num_epochs class_ratios clip_coeff decay_step decay_rate staleness num_samples_factor')
-    Hyperparams.__new__.__defaults__ = (None, None, None, None, None, None, None, None)
-
-    model = imle.IMLE(input_dim, z_dim, opt.target_epsilon, opt.target_delta, conditional)
-    model.train(X_train, y_train, Hyperparams(lr=1e-3, batch_size=opt.batch_size, micro_batch_size=opt.micro_batch_size,
-                                              sigma=opt.sigma, num_epochs=opt.num_epochs, class_ratios=class_ratios,
-                                              clip_coeff=opt.clip_coeff, decay_step=opt.decay_step,
-                                              decay_rate=opt.decay_rate, staleness=opt.staleness,
-                                              num_samples_factor=opt.num_samples_factor), private=opt.enable_privacy)
-
-elif opt.model == 'private-pgm':
-    if not conditional:
-        raise Exception('Private PGM cannot be used to generate data for regression')
-    model = private_pgm.Private_PGM(opt.target_variable, opt.target_epsilon, opt.target_delta)
-    model.train(train, config)
-
 # Generating synthetic data from the trained model
 if opt.model == 'real-data':
     X_syn = X_train
     y_syn = y_train
 
-elif opt.model == 'ron-gauss':
-
-    if conditional:
-        X_syn, y_syn, dp_mean_dict = model.generate(X_train, y=y_train)
-        for label in np.unique(y_test):
-            idx = np.where(y_test == label)
-            x_class = X_test[idx]
-            x_norm = preprocessing.normalize(x_class)
-            x_bar = x_norm - dp_mean_dict[label]
-            x_bar = preprocessing.normalize(x_bar)
-            X_test[idx] = x_bar
-    else:
-        X_syn, y_syn, mu_dp = model.generate(X_train, y_train,
-                                             max_y=np.max(np.concatenate([y_train,y_test], axis=0)))
-        X_norm = preprocessing.normalize((X_test))
-        X_bar = X_norm - mu_dp
-        X_test = preprocessing.normalize(X_bar)
-
-elif opt.model == 'imle' or opt.model == 'dp-wgan' or opt.model == 'pate-gan':
-    syn_data = model.generate(X_train.shape[0], class_ratios)
-    X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
-
-elif opt.model == 'private-pgm':
-    syn_data = model.generate()
-    X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
 # Testing the quality of synthetic data by training and testing the downstream learners
 
@@ -254,13 +196,13 @@ if opt.downstream_task == "classification":
     auc_score = roc_auc_score(y_test, pred_probs)
     print('-' * 40)
     print(f'Linear SVM: {round(auc_score, 4)}')
+
     print('-' * 40)
 
     model = GradientBoostingRegressor()
     model.fit(X_syn, y_syn)
     pred_probs = model.predict(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
-    print('-' * 40)
     print(f'XgBoost: {round(auc_score, 4)}')
     print('-' * 40)
 
