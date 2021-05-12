@@ -31,10 +31,6 @@ import numpy as np
 import pandas as pd
 import collections
 import os
-try:
-    from models.IMLE import imle
-except ImportError as error:
-    pass
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--categorical', action='store_true', help='All attributes of the data are categorical with small domains')
@@ -52,8 +48,6 @@ privacy_parser.add_argument('--target-epsilon', type=float, default=8, help='Eps
 privacy_parser.add_argument('--target-delta', type=float, default=1e-5, help='Delta differential privacy parameter')
 privacy_parser.add_argument('--save-synthetic', action='store_true', help='Save the synthetic data into csv')
 privacy_parser.add_argument('--output-data-path', help='Required if synthetic data needs to be saved')
-
-
 
 noisy_sgd_parser = argparse.ArgumentParser(add_help=False)
 
