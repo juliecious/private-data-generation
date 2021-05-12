@@ -19,10 +19,10 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
-from sklearn.metrics import roc_auc_score, mean_squared_error, auc
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import roc_auc_score, mean_squared_error
 from sklearn import preprocessing
 from scipy.special import expit
-from sklearn.svm import LinearSVC
 
 from models import dp_wgan, pate_gan, ron_gauss
 from models.Private_PGM import private_pgm
@@ -221,7 +221,9 @@ if opt.downstream_task == "classification":
              # 'Neural Network',
              'Gaussian NB',
              'Bernoulli NB',
-             'GradientBoostingClassifier']
+             'GradientBoostingClassifier',
+             'Decision Tree',
+             ]
 
     learners.append((LogisticRegression()))
     learners.append((RandomForestClassifier()))
@@ -229,6 +231,7 @@ if opt.downstream_task == "classification":
     learners.append((GaussianNB()))
     learners.append((BernoulliNB()))
     learners.append((GradientBoostingClassifier()))
+    learners.append((DecisionTreeClassifier()))
 
     print("AUC scores of downstream classifiers on test data : ")
     for i in range(0, len(learners)):
