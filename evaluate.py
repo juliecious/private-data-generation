@@ -15,7 +15,8 @@
 # evaluate.py is used to create the synthetic data generation and evaluation pipeline.
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression, SGDClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor, AdaBoostClassifier, \
+    BaggingClassifier, GradientBoostingRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
@@ -218,24 +219,30 @@ learners = []
 if opt.downstream_task == "classification":
     names = ['Logistic Regression',
              'Random Forest',
-             # 'Neural Network',
              'Gaussian NB',
              'Bernoulli NB',
-             'GradientBoostingClassifier',
              'Decision Tree',
-             'LDA'
+             'LDA',
+             'AdaBoost',
+             'Bagging',
+             'GBM',
+             'MLP',
+             'XgBoost'
              ]
 
     learners.append((LogisticRegression()))
     learners.append((RandomForestClassifier()))
-    # learners.append((MLPClassifier(early_stopping=True)))
     learners.append((GaussianNB()))
     learners.append((BernoulliNB()))
-    learners.append((GradientBoostingClassifier()))
     learners.append((DecisionTreeClassifier()))
     learners.append((LinearDiscriminantAnalysis()))
+    learners.append((AdaBoostClassifier()))
+    learners.append((BaggingClassifier()))
+    learners.append((GradientBoostingClassifier()))
+    learners.append((MLPClassifier(early_stopping=True)))
+    learners.append((GradientBoostingRegressor()))
 
-    print("AUC scores of downstream classifiers on test data : ")
+    print("\nAUC scores of downstream classifiers on test data:")
     for i in range(0, len(learners)):
         score = learners[i].fit(X_syn, y_syn)
         pred_probs = learners[i].predict_proba(X_test)
