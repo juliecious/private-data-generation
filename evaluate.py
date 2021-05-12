@@ -146,6 +146,9 @@ if opt.model == 'real-data':
     X_syn = X_train
     y_syn = y_train
 
+elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
+    syn_data = model.generate(X_train.shape[0], class_ratios)
+    X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
 # Testing the quality of synthetic data by training and testing the downstream learners
 
