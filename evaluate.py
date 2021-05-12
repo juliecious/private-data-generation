@@ -14,14 +14,16 @@
 #
 # evaluate.py is used to create the synthetic data generation and evaluation pipeline.
 
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
-from sklearn.naive_bayes import GaussianNB
-from sklearn.metrics import roc_auc_score, mean_squared_error
+from sklearn.naive_bayes import GaussianNB, BernoulliNB
+from sklearn.metrics import roc_auc_score, mean_squared_error, auc
 from sklearn import preprocessing
 from scipy.special import expit
+from sklearn.svm import LinearSVC
+
 from models import dp_wgan, pate_gan, ron_gauss
 from models.Private_PGM import private_pgm
 import argparse
@@ -214,12 +216,18 @@ elif opt.model == 'private-pgm':
 learners = []
 
 if opt.downstream_task == "classification":
-    names = ['LR', 'Random Forest', 'Neural Network', 'GaussianNB', 'GradientBoostingClassifier']
+    names = ['Logistic Regression',
+             'Random Forest',
+             # 'Neural Network',
+             'Gaussian NB',
+             'Bernoulli NB',
+             'GradientBoostingClassifier']
 
     learners.append((LogisticRegression()))
     learners.append((RandomForestClassifier()))
-    learners.append((MLPClassifier(early_stopping=True)))
+    # learners.append((MLPClassifier(early_stopping=True)))
     learners.append((GaussianNB()))
+    learners.append((BernoulliNB()))
     learners.append((GradientBoostingClassifier()))
 
     print("AUC scores of downstream classifiers on test data : ")
@@ -229,6 +237,14 @@ if opt.downstream_task == "classification":
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
         print('-' * 40)
         print('{0}: {1}'.format(names[i], auc_score))
+
+    model = SGDClassifier()
+    model.fit(X_syn, y_syn)
+    pred_probs = model.decision_function(X_test)
+    test_fpr, test_tpr, te_thresholds = roc_auc_score(y_test, pred_probs)
+    print('-' * 40)
+    print(f'Linear SVM: {auc(test_fpr, test_tpr)}')
+    print('-' * 40)
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
