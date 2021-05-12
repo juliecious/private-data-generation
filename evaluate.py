@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 # evaluate.py is used to create the synthetic data generation and evaluation pipeline.
-
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
@@ -223,6 +223,7 @@ if opt.downstream_task == "classification":
              'Bernoulli NB',
              'GradientBoostingClassifier',
              'Decision Tree',
+             'LDA'
              ]
 
     learners.append((LogisticRegression()))
@@ -232,6 +233,7 @@ if opt.downstream_task == "classification":
     learners.append((BernoulliNB()))
     learners.append((GradientBoostingClassifier()))
     learners.append((DecisionTreeClassifier()))
+    learners.append((LinearDiscriminantAnalysis()))
 
     print("AUC scores of downstream classifiers on test data : ")
     for i in range(0, len(learners)):
