@@ -1,3 +1,5 @@
+# https://www.kaggle.com/randyrose2017/for-beginners-using-keras-to-build-models#1.-Data-observation
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split

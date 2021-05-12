@@ -236,14 +236,14 @@ if opt.downstream_task == "classification":
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
         print('-' * 40)
-        print('{0}: {1}'.format(names[i], auc_score))
+        print('{0}: {1}'.format(names[i], round(auc_score, 4)))
 
     model = SGDClassifier()
     model.fit(X_syn, y_syn)
     pred_probs = model.decision_function(X_test)
-    test_fpr, test_tpr, te_thresholds = roc_auc_score(y_test, pred_probs)
+    auc_score = roc_auc_score(y_test, pred_probs)
     print('-' * 40)
-    print(f'Linear SVM: {auc(test_fpr, test_tpr)}')
+    print(f'Linear SVM: {round(auc_score, 4)}')
     print('-' * 40)
 
 else:
