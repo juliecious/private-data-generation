@@ -80,24 +80,39 @@ The first line of the csv data file is assumed to contain the column names and t
 Model names can be **real-data**, **pate-gan**, **dp-wgan**, **ron-gauss**, **imle** or **private-pgm**.
 
 ### Example:
-After preprocessing Adult data using the preprocess_adult.py, we can train a differentially private wasserstein GAN on it and evaluate the quality of the synthetic dataset using the below script :
+After preprocessing Cervical data using the preprocess_cervical.py, we can train a differentially private wasserstein GAN on it and evaluate the quality of the synthetic dataset using the below script :
 
-```python evaluate.py --target-variable='income' --train-data-path=./data/adult_processed_train.csv --test-data-path=./data/adult_processed_test.csv --normalize-data dp-wgan  --enable-privacy --sigma=0.8 --target-epsilon=8```
+```python evaluate.py --target-variable='Biopsy' --train-data-path=./data/cervical_processed_train.csv --test-data-path=./data/cervical_processed_test.csv --normalize-data dp-wgan  --enable-privacy --sigma=0.8 --target-epsilon=8```
 
 ### Example Output:
 
 ```
-AUC scores of downstream classifiers on test data :
+AUC scores of downstream classifiers on test data:
 ----------------------------------------
-LR: 0.7411981709396546
+Logistic Regression: 0.7758
 ----------------------------------------
-Random Forest: 0.7540559254517339
+Random Forest: 0.8566
 ----------------------------------------
-Neural Network: 0.7311882809628891
+Gaussian NB: 0.7273
 ----------------------------------------
-GaussianNB: 0.7580265076488256
+Bernoulli NB: 0.5
 ----------------------------------------
-GradientBoostingClassifier: 0.747129484720164
+Decision Tree: 0.5
+----------------------------------------
+LDA: 0.7228
+----------------------------------------
+AdaBoost: 0.3004
+----------------------------------------
+Bagging: 0.6666
+----------------------------------------
+GBM: 0.8958
+----------------------------------------
+MLP: 0.2112
+----------------------------------------
+Linear SVM: 0.8103
+----------------------------------------
+XgBoost: 0.6575
+----------------------------------------
 ```
 
 Synthetic data can be saved in the /data folder using the flag ```--save-synthetic```
