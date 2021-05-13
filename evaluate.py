@@ -158,18 +158,6 @@ learners = []
 roc_avg = 0
 prc_avg = 0
 if opt.downstream_task == "classification":
-    names = ['Logistic Regression',
-             'Random Forest',
-             'Gaussian NB',
-             'Bernoulli NB',
-             'Decision Tree',
-             'LDA',
-             'AdaBoost',
-             'Bagging',
-             'GBM',
-             'MLP',
-             ]
-
     learners.append((LogisticRegression()))
     learners.append((RandomForestClassifier()))
     learners.append((GaussianNB()))
@@ -190,35 +178,18 @@ if opt.downstream_task == "classification":
         roc_avg += auc_score
         prc_avg += auprc
         print('-' * 40)
-        print(f'{names[i]+ ": ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+        print(f'{str(type(model).__name__) + ": ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
 
-    # model = SGDClassifier()
-    # model.fit(X_syn, y_syn)
-    # pred_probs = model.decision_function(X_test)
-    # auc_score = roc_auc_score(y_test, pred_probs)
-    # print('-' * 40)
-    # print(f'Linear SVM SGDClassifier: {round(auc_score, 4)}')
-
-    model = LinearSVC()
-    model.fit(X_syn, y_syn)
-    pred_probs = model.decision_function(X_test)
-    auc_score = roc_auc_score(y_test, pred_probs)
-    auprc = average_precision_score(y_test, pred_probs)
-    roc_avg += auc_score
-    prc_avg += auprc
-    print('-' * 40)
-    print(f'{"Linear SVM: ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
-    print('-' * 40)
-
-    model = GradientBoostingRegressor()
-    model.fit(X_syn, y_syn)
-    pred_probs = model.predict(X_test)
-    auc_score = roc_auc_score(y_test, pred_probs)
-    auprc = average_precision_score(y_test, pred_probs)
-    roc_avg += auc_score
-    prc_avg += auprc
-    print(f'{"XgBoost: ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
-    print('-' * 40)
+    for model in [LinearSVC(), GradientBoostingRegressor()]:
+        model.fit(X_syn, y_syn)
+        preds = model.predict(X_test)
+        auc_score = roc_auc_score(y_test, preds)
+        auprc = average_precision_score(y_test, preds)
+        roc_avg += auc_score
+        prc_avg += auprc
+        print('-' * 40)
+        print(f'{type(model).__name__:<24} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+        print('-' * 40)
 
     print(f'{"Average: ":<24} auc {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
 
