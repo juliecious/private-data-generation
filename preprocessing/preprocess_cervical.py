@@ -9,6 +9,7 @@ df = pd.read_csv('./data/risk_factors_cervical_cancer.csv')
 df = df.replace('?', np.nan)
 df = df.apply(pd.to_numeric)
 
+# Data Imputation
 # for continuous variable
 df['Number of sexual partners'] = df['Number of sexual partners'].fillna(df['Number of sexual partners'].median())
 df['First sexual intercourse'] = df['First sexual intercourse'].fillna(df['First sexual intercourse'].median())

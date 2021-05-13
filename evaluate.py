@@ -20,6 +20,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
+from sklearn.svm import LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_auc_score, mean_squared_error
 from sklearn import preprocessing
@@ -160,6 +161,7 @@ if opt.downstream_task == "classification":
              'Random Forest',
              'Gaussian NB',
              'Bernoulli NB',
+             'Linear SVM',
              'Decision Tree',
              'LDA',
              'AdaBoost',
@@ -172,6 +174,7 @@ if opt.downstream_task == "classification":
     learners.append((RandomForestClassifier()))
     learners.append((GaussianNB()))
     learners.append((BernoulliNB()))
+    learners.append((LinearSVC()))
     learners.append((DecisionTreeClassifier()))
     learners.append((LinearDiscriminantAnalysis()))
     learners.append((AdaBoostClassifier()))
@@ -185,7 +188,7 @@ if opt.downstream_task == "classification":
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
         print('-' * 40)
-        print('{0}: {1}'.format(names[i], round(auc_score, 4)))
+        print(f'{names[i]}: {round(auc_score, 4):>15}')
 
     model = SGDClassifier()
     model.fit(X_syn, y_syn)
