@@ -190,7 +190,7 @@ if opt.downstream_task == "classification":
         roc_avg += auc_score
         prc_avg += auprc
         print('-' * 40)
-        print(f'{names[i]+ ": auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+        print(f'{names[i]+ ": ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
 
     # model = SGDClassifier()
     # model.fit(X_syn, y_syn)
@@ -207,7 +207,7 @@ if opt.downstream_task == "classification":
     roc_avg += auc_score
     prc_avg += auprc
     print('-' * 40)
-    print(f'{"Linear SVM: auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+    print(f'{"Linear SVM: ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
 
     model = GradientBoostingRegressor()
@@ -217,10 +217,10 @@ if opt.downstream_task == "classification":
     auprc = average_precision_score(y_test, pred_probs)
     roc_avg += auc_score
     prc_avg += auprc
-    print(f'{"XgBoost: auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+    print(f'{"XgBoost: ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
 
-    print(f'{"Average: auc":<24} {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
+    print(f'{"Average: ":<24} auc {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
