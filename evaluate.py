@@ -155,7 +155,8 @@ elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
 
 # Creating downstream learners
 learners = []
-
+roc_avg = 0
+prc_avg = 0
 if opt.downstream_task == "classification":
     names = ['Logistic Regression',
              'Random Forest',
@@ -186,8 +187,10 @@ if opt.downstream_task == "classification":
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
         auprc = average_precision_score(y_test, pred_probs[:, 1])
+        roc_avg += auc_score
+        prc_avg += auprc
         print('-' * 40)
-        print(f'{names[i]}: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+        print(f'{names[i]+ ": auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
 
     # model = SGDClassifier()
     # model.fit(X_syn, y_syn)
@@ -201,8 +204,10 @@ if opt.downstream_task == "classification":
     pred_probs = model.decision_function(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
     auprc = average_precision_score(y_test, pred_probs)
+    roc_avg += auc_score
+    prc_avg += auprc
     print('-' * 40)
-    print(f'Linear SVM: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+    print(f'{"Linear SVM: auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
 
     model = GradientBoostingRegressor()
@@ -210,8 +215,12 @@ if opt.downstream_task == "classification":
     pred_probs = model.predict(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
     auprc = average_precision_score(y_test, pred_probs)
-    print(f'XgBoost: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+    roc_avg += auc_score
+    prc_avg += auprc
+    print(f'{"XgBoost: auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
+
+    print(f'Average: ')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
