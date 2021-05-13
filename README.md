@@ -93,25 +93,25 @@ After preprocessing Cervical data using the preprocess_cervical.py, we can train
 ```
 Evaluate downstream classifiers on test data:
 ------------------------------------------------------------
-LogisticRegression:            auc 0.2405	 auprc 0.0437
+LogisticRegression             auc 0.2405	 auprc 0.0437
 ------------------------------------------------------------
-RandomForestClassifier:        auc 0.4831	 auprc 0.0633
+RandomForestClassifier         auc 0.4831	 auprc 0.0633
 ------------------------------------------------------------
-GaussianNB:                    auc 0.3411	 auprc 0.0716
+GaussianNB                     auc 0.3411	 auprc 0.0716
 ------------------------------------------------------------
-BernoulliNB:                   auc   0.5	 auprc 0.064
+BernoulliNB                    auc   0.5	 auprc 0.064
 ------------------------------------------------------------
-DecisionTreeClassifier:        auc 0.5816	 auprc 0.1251
+DecisionTreeClassifier         auc 0.5816	 auprc 0.1251
 ------------------------------------------------------------
-LinearDiscriminantAnalysis:    auc 0.2044	 auprc 0.0419
+LinearDiscriminantAnalysis     auc 0.2044	 auprc 0.0419
 ------------------------------------------------------------
-AdaBoostClassifier:            auc 0.4591	 auprc 0.1166
+AdaBoostClassifier             auc 0.4591	 auprc 0.1166
 ------------------------------------------------------------
-BaggingClassifier:             auc 0.3735	 auprc 0.053
+BaggingClassifier              auc 0.3735	 auprc 0.053
 ------------------------------------------------------------
-GradientBoostingClassifier:    auc 0.5085	 auprc 0.1614
+GradientBoostingClassifier     auc 0.5085	 auprc 0.1614
 ------------------------------------------------------------
-MLPClassifier:                 auc 0.9113	 auprc 0.4919
+MLPClassifier                  auc 0.9113	 auprc 0.4919
 ------------------------------------------------------------
 SVC                            auc   0.5	 auprc 0.064
 ------------------------------------------------------------
@@ -120,7 +120,8 @@ GradientBoostingRegressor      auc 0.5195	 auprc 0.1016
 Average:                       auc 0.4685	 auprc 0.1165
 ```
 
-Synthetic data can be saved in the /data folder using the flag ```--save-synthetic```
+Synthetic data can be saved in the /data folder using the flag ```--save-synthetic```. For example,
+```python python evaluate.py --target-variable='status'  --train-data-path=./data/processed_train.csv --test-data-path=./data/processed_test.csv --normalize-data dp-wgan --enable-privacy --sigma=0.8 --target-epsilon=8 --save-synthetic --output-data-path=./data ```
 
 ## Some useful user args:
 
@@ -172,9 +173,8 @@ For more details refer to https://www.microsoft.com/en-us/research/wp-content/up
 
 ```--clamp-upper : ``` Upper clamp parameter for the weights of the NN in wasserstein GAN
 
-
-
-
+#### CT-GAN:
+TODOs
 
 
 
