@@ -186,7 +186,7 @@ if opt.downstream_task == "classification":
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
         print('-' * 40)
-        print(f'{names[i]}: {round(auc_score, 4):>15}')
+        print(f'{names[i]}: {round(auc_score, 4):<15}')
 
     model = SGDClassifier()
     model.fit(X_syn, y_syn)
