@@ -1,9 +1,8 @@
 # Private Data Generation Toolbox
 
-The goal of this toolbox is to make private generation of synthetic data samples accessible to machine learning practitioners. It currently implements 5 state of the art generative models that can generate differentially private synthetic
-data. We evaluate the models on 4 public datasets from domains where privacy of sensitive data is paramount. Users can benchmark the models on the existing datasets or feed a new sensitive dataset as an input and get a synthetic dataset 
+The goal of this toolbox is to make private generation of synthetic data samples accessible to machine learning practitioners. It currently implements 3 state of the art generative models that can generate differentially private synthetic
+data. We evaluate the models on 6 public datasets from domains where privacy of sensitive data is paramount. Users can benchmark the models on the existing datasets or feed a new sensitive dataset as an input and get a synthetic dataset 
 as the output which can be distributed to third parties with strong differential privacy guarantees.
-
 
 
 ## Models : 
@@ -11,16 +10,21 @@ as the output which can be distributed to third parties with strong differential
 
 **DP-WGAN** : Implementation of private Wasserstein GAN using noisy gradient descent moments accountant. 
 
-## Dataset description :
+**CT-GAN** : To be added 
 
-**Adult Census** : The dataset comprises of census attributes like age, gender, native country etc and the goal is to predict whether a person earns more than $ 50k a year or not.
-https://archive.ics.uci.edu/ml/datasets/adult
+## Dataset description :
 
 **Cervical Cancer** : This dataset focuses on the prediction of indicators/diagnosis of cervical cancer. The features cover demographic information, habits, and historic medical records.
 https://archive.ics.uci.edu/ml/datasets/Cervical+cancer+%28Risk+Factors%29#
 
+**Epileptic Seizure** : This dataset is a pre-processed and re-structured/reshaped version of a very commonly used dataset featuring epileptic seizure detection.
+https://www.kaggle.com/harunshimanto/epileptic-seizure-recognition
+
 **NHANES Diabetes** : National Health and Nutrition Examination Survey (NHANES) questionnaire is used to predict the onset of type II diabetes.
 https://github.com/semerj/NHANES-diabetes/tree/master/data
+
+**Adult Census** : The dataset comprises of census attributes like age, gender, native country etc and the goal is to predict whether a person earns more than $ 50k a year or not.
+https://archive.ics.uci.edu/ml/datasets/adult
 
 **Give Me Some Credit** : Historical data are provided on 250,000 borrowers and task is to help in credit scoring, by predicting the probability that somebody will experience financial distress in the next two years.
 https://www.kaggle.com/c/GiveMeSomeCredit/data
