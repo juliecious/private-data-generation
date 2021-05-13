@@ -177,8 +177,8 @@ if opt.downstream_task == "classification":
         auprc = average_precision_score(y_test, pred_probs[:, 1])
         roc_avg += auc_score
         prc_avg += auprc
-        print('-' * 40)
-        print(f'{str(type(model).__name__) + ": ":<24} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+        print('-' * 50)
+        print(f'{str(type(learners[i]).__name__) + ": ":<30} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
 
     for model in [LinearSVC(), GradientBoostingRegressor()]:
         model.fit(X_syn, y_syn)
@@ -187,11 +187,11 @@ if opt.downstream_task == "classification":
         auprc = average_precision_score(y_test, preds)
         roc_avg += auc_score
         prc_avg += auprc
-        print('-' * 40)
-        print(f'{type(model).__name__:<24} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
-        print('-' * 40)
 
-    print(f'{"Average: ":<24} auc {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
+        print(f'{type(model).__name__:<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+        print('-' * 50)
+
+    print(f'{"Average: ":<30} auc {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
