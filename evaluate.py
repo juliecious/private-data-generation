@@ -161,7 +161,6 @@ if opt.downstream_task == "classification":
              'Random Forest',
              'Gaussian NB',
              'Bernoulli NB',
-             'Linear SVM',
              'Decision Tree',
              'LDA',
              'AdaBoost',
@@ -174,7 +173,6 @@ if opt.downstream_task == "classification":
     learners.append((RandomForestClassifier()))
     learners.append((GaussianNB()))
     learners.append((BernoulliNB()))
-    learners.append((LinearSVC()))
     learners.append((DecisionTreeClassifier()))
     learners.append((LinearDiscriminantAnalysis()))
     learners.append((AdaBoostClassifier()))
@@ -195,8 +193,14 @@ if opt.downstream_task == "classification":
     pred_probs = model.decision_function(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
     print('-' * 40)
-    print(f'Linear SVM: {round(auc_score, 4)}')
+    print(f'Linear SVM SGDClassifier: {round(auc_score, 4)}')
 
+    model = LinearSVC()
+    model.fit(X_syn, y_syn)
+    pred_probs = model.decision_function(X_test)
+    auc_score = roc_auc_score(y_test, pred_probs)
+    print('-' * 40)
+    print(f'Linear LinearSVC: {round(auc_score, 4)}')
     print('-' * 40)
 
     model = GradientBoostingRegressor()
