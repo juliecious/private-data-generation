@@ -20,7 +20,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier,
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
-from sklearn.svm import LinearSVC
+from sklearn.svm import LinearSVC, SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score
 from sklearn import preprocessing
@@ -178,9 +178,9 @@ if opt.downstream_task == "classification":
         roc_avg += auc_score
         prc_avg += auprc
         print('-' * 50)
-        print(f'{str(type(learners[i]).__name__) + ": ":<30} auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
+        print(f'{str(type(learners[i]).__name__) + ": ":<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
-    for model in [LinearSVC(), GradientBoostingRegressor()]:
+    for model in [SVC(), GradientBoostingRegressor()]:
         model.fit(X_syn, y_syn)
         preds = model.predict(X_test)
         auc_score = roc_auc_score(y_test, preds)
@@ -191,7 +191,7 @@ if opt.downstream_task == "classification":
         print(f'{type(model).__name__:<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
         print('-' * 50)
 
-    print(f'{"Average: ":<30} auc {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
+    print(f'{"Average: ":<30} auc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
