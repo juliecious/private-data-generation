@@ -185,7 +185,7 @@ if opt.downstream_task == "classification":
         score = learners[i].fit(X_syn, y_syn)
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
-        auprc = average_precision_score(y_test, pred_probs)
+        auprc = average_precision_score(y_test, pred_probs[:, 1])
         print('-' * 40)
         print(f'{names[i]}: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
 
