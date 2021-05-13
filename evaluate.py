@@ -22,7 +22,7 @@ from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
 from sklearn.svm import LinearSVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import roc_auc_score, mean_squared_error
+from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score
 from sklearn import preprocessing
 from scipy.special import expit
 
@@ -180,13 +180,14 @@ if opt.downstream_task == "classification":
     learners.append((GradientBoostingClassifier()))
     learners.append((MLPClassifier(early_stopping=True)))
 
-    print("\nAUC scores of downstream classifiers on test data:")
+    print("\nEvaluate downstream classifiers on test data:")
     for i in range(0, len(learners)):
         score = learners[i].fit(X_syn, y_syn)
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
+        auprc = average_precision_score(y_test, pred_probs)
         print('-' * 40)
-        print(f'{names[i]}: {round(auc_score, 4):<20}')
+        print(f'{names[i]}: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
 
     # model = SGDClassifier()
     # model.fit(X_syn, y_syn)
@@ -199,15 +200,17 @@ if opt.downstream_task == "classification":
     model.fit(X_syn, y_syn)
     pred_probs = model.decision_function(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
+    auprc = average_precision_score(y_test, pred_probs)
     print('-' * 40)
-    print(f'Linear SVM: {round(auc_score, 4):<20}')
+    print(f'Linear SVM: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
 
     model = GradientBoostingRegressor()
     model.fit(X_syn, y_syn)
     pred_probs = model.predict(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
-    print(f'XgBoost: {round(auc_score, 4):<20}')
+    auprc = average_precision_score(y_test, pred_probs)
+    print(f'XgBoost: auc {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
 
 else:
