@@ -178,7 +178,7 @@ if opt.downstream_task == "classification":
         roc_avg += auc_score
         prc_avg += auprc
         print('-' * 60)
-        print(f'{str(type(learners[i]).__name__) + ": ":<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+        print(f'{str(type(learners[i]).__name__):<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
     for model in [SVC(), GradientBoostingRegressor()]:
         model.fit(X_syn, y_syn)
@@ -191,7 +191,7 @@ if opt.downstream_task == "classification":
         print(f'{type(model).__name__:<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
     print('-' * 60)
-    print(f'{"Average: ":<30} auc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
+    print(f'{"Average ":<30} auc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']

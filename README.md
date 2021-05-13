@@ -1,7 +1,7 @@
 # Private Data Generation Toolbox
 
 The goal of this toolbox is to make private generation of synthetic data samples accessible to machine learning practitioners. It currently implements 3 state of the art generative models that can generate differentially private synthetic
-data. We evaluate the models on 6 public datasets from domains where privacy of sensitive data is paramount. Users can benchmark the models on the existing datasets or feed a new sensitive dataset as an input and get a synthetic dataset 
+data. We evaluate the models on 7 public datasets from domains where privacy of sensitive data is paramount. Users can benchmark the models on the existing datasets or feed a new sensitive dataset as an input and get a synthetic dataset 
 as the output which can be distributed to third parties with strong differential privacy guarantees.
 
 
@@ -81,7 +81,7 @@ The first line of the csv data file is assumed to contain the column names and t
 
 ```python evaluate.py --target-variable=<> --train-data-path=<> --test-data-path=<> <model_name>  --enable-privacy --target-epsilon=5 --target-delta=1e-5```
 
-Model names can be **real-data**, **pate-gan**, **dp-wgan**, **ron-gauss**, **imle** or **private-pgm**.
+Model names can be **real-data**, **pate-gan**, **dp-wgan**, or **ct-gan**.
 
 ### Example:
 After preprocessing Cervical data using the preprocess_cervical.py, we can train a differentially private wasserstein GAN on it and evaluate the quality of the synthetic dataset using the below script :
@@ -91,32 +91,33 @@ After preprocessing Cervical data using the preprocess_cervical.py, we can train
 ### Example Output:
 
 ```
-AUC scores of downstream classifiers on test data:
-----------------------------------------
-Logistic Regression: 0.7758
-----------------------------------------
-Random Forest: 0.8566
-----------------------------------------
-Gaussian NB: 0.7273
-----------------------------------------
-Bernoulli NB: 0.5
-----------------------------------------
-Decision Tree: 0.5
-----------------------------------------
-LDA: 0.7228
-----------------------------------------
-AdaBoost: 0.3004
-----------------------------------------
-Bagging: 0.6666
-----------------------------------------
-GBM: 0.8958
-----------------------------------------
-MLP: 0.2112
-----------------------------------------
-Linear SVM: 0.8103
-----------------------------------------
-XgBoost: 0.6575
-----------------------------------------
+Evaluate downstream classifiers on test data:
+------------------------------------------------------------
+LogisticRegression:            auc 0.2405	 auprc 0.0437
+------------------------------------------------------------
+RandomForestClassifier:        auc 0.4831	 auprc 0.0633
+------------------------------------------------------------
+GaussianNB:                    auc 0.3411	 auprc 0.0716
+------------------------------------------------------------
+BernoulliNB:                   auc   0.5	 auprc 0.064
+------------------------------------------------------------
+DecisionTreeClassifier:        auc 0.5816	 auprc 0.1251
+------------------------------------------------------------
+LinearDiscriminantAnalysis:    auc 0.2044	 auprc 0.0419
+------------------------------------------------------------
+AdaBoostClassifier:            auc 0.4591	 auprc 0.1166
+------------------------------------------------------------
+BaggingClassifier:             auc 0.3735	 auprc 0.053
+------------------------------------------------------------
+GradientBoostingClassifier:    auc 0.5085	 auprc 0.1614
+------------------------------------------------------------
+MLPClassifier:                 auc 0.9113	 auprc 0.4919
+------------------------------------------------------------
+SVC                            auc   0.5	 auprc 0.064
+------------------------------------------------------------
+GradientBoostingRegressor      auc 0.5195	 auprc 0.1016
+------------------------------------------------------------
+Average:                       auc 0.4685	 auprc 0.1165
 ```
 
 Synthetic data can be saved in the /data folder using the flag ```--save-synthetic```
