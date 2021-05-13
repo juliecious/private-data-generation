@@ -186,7 +186,7 @@ if opt.downstream_task == "classification":
         pred_probs = learners[i].predict_proba(X_test)
         auc_score = roc_auc_score(y_test, pred_probs[:, 1])
         print('-' * 40)
-        print(f'{names[i]}: {round(auc_score, 4):>25}')
+        print(f'{names[i]}: {round(auc_score, 4):<20}')
 
     # model = SGDClassifier()
     # model.fit(X_syn, y_syn)
@@ -200,14 +200,14 @@ if opt.downstream_task == "classification":
     pred_probs = model.decision_function(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
     print('-' * 40)
-    print(f'Linear SVM: {round(auc_score, 4)}')
+    print(f'Linear SVM: {round(auc_score, 4):<20}')
     print('-' * 40)
 
     model = GradientBoostingRegressor()
     model.fit(X_syn, y_syn)
     pred_probs = model.predict(X_test)
     auc_score = roc_auc_score(y_test, pred_probs)
-    print(f'XgBoost: {round(auc_score, 4)}')
+    print(f'XgBoost: {round(auc_score, 4):<20}')
     print('-' * 40)
 
 else:
