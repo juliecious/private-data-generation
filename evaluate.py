@@ -220,7 +220,7 @@ if opt.downstream_task == "classification":
     print(f'{"XgBoost: auc":<24} {round(auc_score, 4):>5}    auprc {round(auprc, 4):>5}')
     print('-' * 40)
 
-    print(f'Average: ')
+    print(f'{"Average: auc":<24} {round(roc_avg / 12, 4)}    auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
