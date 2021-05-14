@@ -38,7 +38,6 @@ parser.add_argument('--categorical', action='store_true', help='All attributes o
 parser.add_argument('--target-variable', help='Required if data has a target class')
 parser.add_argument('--train-data-path', required=True)
 parser.add_argument('--test-data-path', required=True)
-parser.add_argument('--data-path', required=True)
 parser.add_argument('--normalize-data', action='store_true', help='Apply sigmoid function to each value in the data')
 parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
 parser.add_argument('--downstream-task', default="classification", help='classification | regression')
