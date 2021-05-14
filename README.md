@@ -6,11 +6,11 @@ as the output which can be distributed to third parties with strong differential
 
 
 ## Models : 
-**PATE-GAN** : PATE-GAN : Generating Synthetic Data with Differential Privacy Guarantees. ICLR 2019
+**PATE-GAN**: PATE-GAN : Generating Synthetic Data with Differential Privacy Guarantees. ICLR 2019
 
-**DP-WGAN** : Implementation of private Wasserstein GAN using noisy gradient descent moments accountant. 
+**DP-WGAN**: Implementation of private Wasserstein GAN using noisy gradient descent moments accountant. 
 
-**CT-GAN** : To be added 
+**CT-GAN**: To be added 
 
 ## Dataset description :
 
@@ -127,51 +127,53 @@ Synthetic data can be saved in the /data folder using the flag ```--save-synthet
 
 ### General args:
 
-```--downstream-task : ``` **classification** or **regression**
+```--downstream-task```: **classification** (default) or **regression**
 
-```--normalize-data : ``` Apply sigmoid function to each value in the data
+```--test-mode```:  **tstr** (Train on synthetic test on real, default) or **tsts** (Train and test both on synthetic data)
 
-```--categorical : ``` If all attrbiutes of the data are categorical
+```--normalize-data```: Apply sigmoid function to each value in the data
 
-```--target-variable : ``` Attribute name denoting the target
+```--categorical```: If all attrbiutes of the data are categorical
+
+```--target-variable```: Attribute name denoting the target
 
 ### Privacy args:
 
-```--enable-privacy : ``` Enables private data generation. Non private mode can only be used for DP-WGAN and IMLE.
+```--enable-privacy```: Enables private data generation. Non private mode can only be used for DP-WGAN and IMLE.
 
-```--target-epsilon : ``` epsilon parameter of differential privacy
+```--target-epsilon```: epsilon parameter of differential privacy, represents the maximum privacy loss
 
-```--target-delta : ``` delta parameter of differential privacy
+```--target-delta```: delta parameter of differential privacy, represents the probability of a privacy breach
 
 For more details refer to https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/dwork.pdf
 
 ### Noisy gradient descent args:
 
-```--sigma : ``` Gaussian noise variance multiplier. A larger sigma will make the model train for longer epochs for the same privacy budget
+```--sigma```: Gaussian noise variance multiplier. A larger sigma will make the model train for longer epochs for the same privacy budget
 
-```--clip-coeff : ``` The coefficient to clip the gradients to before adding noise for private SGD training
+```--clip-coeff```: The coefficient to clip the gradients to before adding noise for private SGD training
 
-```--micro-batch-size : ``` Parameter to tradeoff speed vs efficiency. Gradients are averaged for a microbatch and then clipped before adding noise
+```--micro-batch-size```: Parameter to tradeoff speed vs efficiency. Gradients are averaged for a microbatch and then clipped before adding noise
 
 ### Model specific args:
 
 #### PATE-GAN:
 
-```--lap-scale : ``` Inverse laplace noise scale multiplier. A larger lap_scale will reduce the noise that is added per iteration of training
+```--lap-scale```: Inverse laplace noise scale multiplier. A larger lap_scale will reduce the noise that is added per iteration of training
 
-```--num-teachers : ``` Number of teacher disciminators
+```--num-teachers```: Number of teacher disciminators
 
-```--teacher-iters : ``` Teacher iterations during training per generator iteration
+```--teacher-iters```: Teacher iterations during training per generator iteration
 
-```--student-iters : ``` Student iterations during training per generator iteration
+```--student-iters```: Student iterations during training per generator iteration
 
-```--num-moments : ``` Number of higher moments to use for epsilon calculation
+```--num-moments```: Number of higher moments to use for epsilon calculation
 
 #### DP-WGAN:
 
-```--clamp-lower : ``` Lower clamp parameter for the weights of the NN in wasserstein GAN
+```--clamp-lower```: Lower clamp parameter for the weights of the NN in wasserstein GAN
 
-```--clamp-upper : ``` Upper clamp parameter for the weights of the NN in wasserstein GAN
+```--clamp-upper```: Upper clamp parameter for the weights of the NN in wasserstein GAN
 
 #### CT-GAN:
 TODOs
