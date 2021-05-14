@@ -17,6 +17,7 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor, AdaBoostClassifier, \
     BaggingClassifier, GradientBoostingRegressor
+from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
@@ -37,9 +38,11 @@ parser.add_argument('--categorical', action='store_true', help='All attributes o
 parser.add_argument('--target-variable', help='Required if data has a target class')
 parser.add_argument('--train-data-path', required=True)
 parser.add_argument('--test-data-path', required=True)
+parser.add_argument('--data-path', required=True)
 parser.add_argument('--normalize-data', action='store_true', help='Apply sigmoid function to each value in the data')
 parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
 parser.add_argument('--downstream-task', default="classification", help='classification | regression')
+parser.add_argument('--test-mode', default="tstr", help='tstr | tsts')
 
 privacy_parser = argparse.ArgumentParser(add_help=False)
 
@@ -153,6 +156,9 @@ elif opt.model == 'dp-wgan' or opt.model == 'pate-gan' or opt.model == 'ct-gan':
     syn_data = model.generate(X_train.shape[0], class_ratios)
     X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
+# train on synthetic test on synthetic
+if opt.test_mode == 'tsts':
+    X_syn, X_test, y_syn, y_test = train_test_split(syn_data[:, :-1], syn_data[:, -1], test_size=0.2, random_state=42)
 
 # Train on synthetic, test on real (TSTR)
 # Testing the quality of synthetic data by training and testing the downstream learners
@@ -173,7 +179,7 @@ if opt.downstream_task == "classification":
     learners.append((GradientBoostingClassifier()))
     learners.append((MLPClassifier(early_stopping=True)))
 
-    print("\nEvaluate downstream classifiers on test data:")
+    print(f"\nEvaluate classifiers with testing mode {str(opt.test_mode)}:")
     for i in range(0, len(learners)):
         score = learners[i].fit(X_syn, y_syn)
         pred_probs = learners[i].predict_proba(X_test)
@@ -213,9 +219,6 @@ else:
         rmse = np.sqrt(mean_squared_error(y_test, pred_vals))
         print('-' * 40)
         print('{0}: {1}'.format(names[i], rmse))
-
-# TODO: Add another testing mode - train and test on synthetic datasets (TSTS)
-
 
 if opt.model != 'real-data':
     if opt.save_synthetic:

@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 
 df = pd.read_csv('./data/Epileptic_Seizure_Recognition.csv')
 
-df = df.drop(columns='Unnamed')
+df = df.drop('Unnamed', axis=1)
 
 dic = {5: 0, 4: 0, 3: 0, 2: 0, 1: 1}
 df['y'] = df['y'].map(dic)
