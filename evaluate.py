@@ -14,16 +14,15 @@
 #
 # evaluate.py is used to create the synthetic data generation and evaluation pipeline.
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor, AdaBoostClassifier, \
     BaggingClassifier, GradientBoostingRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
-from sklearn.svm import LinearSVC, SVC
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score
-from sklearn import preprocessing
 from scipy.special import expit
 
 from models import dp_wgan, pate_gan
@@ -142,15 +141,20 @@ elif opt.model == 'dp-wgan':
                                               clip_coeff=opt.clip_coeff, sigma=opt.sigma, class_ratios=class_ratios, lr=
                                               5e-5, num_epochs=opt.num_epochs), private=opt.enable_privacy)
 
+elif opt.model == 'ct-gan':
+    pass
+
 # Generating synthetic data from the trained model
 if opt.model == 'real-data':
     X_syn = X_train
     y_syn = y_train
 
-elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
+elif opt.model == 'dp-wgan' or opt.model == 'pate-gan' or opt.model == 'ct-gan':
     syn_data = model.generate(X_train.shape[0], class_ratios)
     X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
+
+# Train on synthetic, test on real (TSTR)
 # Testing the quality of synthetic data by training and testing the downstream learners
 
 # Creating downstream learners
@@ -210,6 +214,9 @@ else:
         print('-' * 40)
         print('{0}: {1}'.format(names[i], rmse))
 
+# TODO: Add another testing mode - train and test on synthetic datasets (TSTS)
+
+
 if opt.model != 'real-data':
     if opt.save_synthetic:
 
@@ -222,6 +229,3 @@ if opt.model != 'real-data':
         syn_df = pd.concat([X_syn_df, y_syn_df], axis=1)
         syn_df.to_csv(opt.output_data_path + "/synthetic_data.csv")
         print("Saved synthetic data at : ", opt.output_data_path)
-
-
-
