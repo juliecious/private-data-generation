@@ -167,7 +167,7 @@ learners = []
 roc_avg = 0
 prc_avg = 0
 if opt.downstream_task == "classification":
-    learners.append((LogisticRegression()))
+    learners.append((LogisticRegression(max_iter=1000)))
     learners.append((RandomForestClassifier()))
     learners.append((GaussianNB()))
     learners.append((BernoulliNB()))
