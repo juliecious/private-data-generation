@@ -21,7 +21,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score
 from scipy.special import expit
@@ -173,10 +173,11 @@ if opt.downstream_task == "classification":
     learners.append((BernoulliNB()))
     learners.append((DecisionTreeClassifier()))
     learners.append((LinearDiscriminantAnalysis()))
-    learners.append((AdaBoostClassifier()))
+    learners.append((AdaBoostClassifier(n_estimators=100)))
     learners.append((BaggingClassifier()))
     learners.append((GradientBoostingClassifier()))
-    learners.append((MLPClassifier(early_stopping=True)))
+    learners.append((MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=300, activation='relu', \
+                                   solver='adam', random_state=42, early_stopping=True)))
 
     print(f"\nEvaluate classifiers with testing mode {str(opt.test_mode)}:")
     for i in range(0, len(learners)):
@@ -189,7 +190,7 @@ if opt.downstream_task == "classification":
         print('-' * 60)
         print(f'{str(type(learners[i]).__name__):<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
-    for model in [SVC(), GradientBoostingRegressor()]:
+    for model in [LinearSVC(max_iter=10000), GradientBoostingRegressor()]:
         model.fit(X_syn, y_syn)
         preds = model.predict(X_test)
         auc_score = roc_auc_score(y_test, preds)
