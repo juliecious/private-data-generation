@@ -189,23 +189,20 @@ if opt.downstream_task == "classification":
         roc_avg += auc_score
         prc_avg += auprc
         print('-' * 60)
-        print(f'{str(type(learners[i]).__name__):<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+        print(f'{str(type(learners[i]).__name__):<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
-    model = LinearSVC(max_iter=10000)
-    model.fit(X_syn, y_syn)
-    preds = model.predict(X_test)
-    auc_score = roc_auc_score(y_test, preds)
-    auprc = average_precision_score(y_test, preds)
-    roc_avg += auc_score
-    prc_avg += auprc
-    print('-' * 60)
-    print(f'{type(model).__name__:<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
-
-    # XGBClassifier(objective="binary:logistic", random_state=42, eval_metric="auc")
-
+    for model in [LinearSVC(max_iter=10000), XGBClassifier(random_state=42)]:
+        model.fit(X_syn, y_syn)
+        preds = model.predict(X_test)
+        auc_score = roc_auc_score(y_test, preds)
+        auprc = average_precision_score(y_test, preds)
+        roc_avg += auc_score
+        prc_avg += auprc
+        print('-' * 60)
+        print(f'{type(model).__name__:<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
     print('-' * 60)
-    print(f'{"Average ":<30} auc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
+    print(f'{"Average ":<30} auroc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
