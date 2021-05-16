@@ -25,6 +25,7 @@ from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score
 from scipy.special import expit
+from xgboost import XGBClassifier
 
 from models import dp_wgan, pate_gan
 import argparse
@@ -190,15 +191,18 @@ if opt.downstream_task == "classification":
         print('-' * 60)
         print(f'{str(type(learners[i]).__name__):<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
 
-    for model in [LinearSVC(max_iter=10000), GradientBoostingRegressor()]:
-        model.fit(X_syn, y_syn)
-        preds = model.predict(X_test)
-        auc_score = roc_auc_score(y_test, preds)
-        auprc = average_precision_score(y_test, preds)
-        roc_avg += auc_score
-        prc_avg += auprc
-        print('-' * 60)
-        print(f'{type(model).__name__:<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+    model = LinearSVC(max_iter=10000)
+    model.fit(X_syn, y_syn)
+    preds = model.predict(X_test)
+    auc_score = roc_auc_score(y_test, preds)
+    auprc = average_precision_score(y_test, preds)
+    roc_avg += auc_score
+    prc_avg += auprc
+    print('-' * 60)
+    print(f'{type(model).__name__:<30} auc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+
+    # XGBClassifier(objective="binary:logistic", random_state=42, eval_metric="auc")
+
 
     print('-' * 60)
     print(f'{"Average ":<30} auc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
