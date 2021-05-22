@@ -83,6 +83,8 @@ parser_pate_gan.add_argument('--num-moments', type=int, default=100, help="Numbe
 
 parser_real_data = subparsers.add_parser('real-data')
 
+parser_ct_gan = subparsers.add_parser('ct-gan')
+
 parser_dp_wgan = subparsers.add_parser('dp-wgan', parents=[privacy_parser, noisy_sgd_parser])
 parser_dp_wgan.add_argument('--clamp-lower', type=float, default=-0.01, help="Clamp parameter for wasserstein GAN")
 parser_dp_wgan.add_argument('--clamp-upper', type=float, default=0.01, help="Clamp parameter for wasserstein GAN")
