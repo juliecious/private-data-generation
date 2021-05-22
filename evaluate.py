@@ -40,6 +40,7 @@ parser.add_argument('--categorical', action='store_true', help='All attributes o
 parser.add_argument('--target-variable', help='Required if data has a target class')
 parser.add_argument('--train-data-path', required=True)
 parser.add_argument('--test-data-path', required=True)
+parser.add_argument('--dataset', help='For preprocessing of CTGAN generated data')
 parser.add_argument('--normalize-data', action='store_true', help='Apply sigmoid function to each value in the data')
 parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
 parser.add_argument('--downstream-task', default="classification", help='classification | regression')
@@ -145,7 +146,8 @@ elif opt.model == 'dp-wgan':
                                               5e-5, num_epochs=opt.num_epochs), private=opt.enable_privacy)
 
 elif opt.model == 'ct-gan':
-    pass
+    model = sdv.tabular.CTGAN()
+    model.fit(train)
 
 # Generating synthetic data from the trained model
 if opt.model == 'real-data':
@@ -153,7 +155,14 @@ if opt.model == 'real-data':
     y_syn = y_train
 
 elif opt.model == 'ct-gan':
-    pass
+    syn_data = model.sample(len(train))
+    if opt.dataset == 'cervical':
+        from preprocessing.preprocess_cervical import convert_cervical
+        syn_data = convert_cervical(syn_data)
+    elif opt.dataset == 'seizure':
+
+        syn_data
+    X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
 elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
     syn_data = model.generate(X_train.shape[0], class_ratios)
