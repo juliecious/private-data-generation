@@ -42,7 +42,6 @@ parser.add_argument('--test-data-path', required=True)
 parser.add_argument('--normalize-data', action='store_true', help='Apply sigmoid function to each value in the data')
 parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
 parser.add_argument('--downstream-task', default="classification", help='classification | regression')
-parser.add_argument('--test-mode', default="tstr", help='tstr | tsts')
 
 privacy_parser = argparse.ArgumentParser(add_help=False)
 
@@ -152,13 +151,12 @@ if opt.model == 'real-data':
     X_syn = X_train
     y_syn = y_train
 
-elif opt.model == 'dp-wgan' or opt.model == 'pate-gan' or opt.model == 'ct-gan':
+elif opt.model == 'ct-gan':
+    pass
+
+elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
     syn_data = model.generate(X_train.shape[0], class_ratios)
     X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
-
-# train on synthetic test on synthetic
-if opt.test_mode == 'tsts':
-    X_syn, X_test, y_syn, y_test = train_test_split(syn_data[:, :-1], syn_data[:, -1], test_size=0.2, random_state=42)
 
 # Train on synthetic, test on real (TSTR)
 # Testing the quality of synthetic data by training and testing the downstream learners

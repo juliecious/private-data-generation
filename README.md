@@ -129,8 +129,6 @@ Synthetic data can be saved in the /data folder using the flag ```--save-synthet
 
 ```--downstream-task```: **classification** (default) or **regression**
 
-```--test-mode```:  **tstr** (Train on synthetic test on real, default) or **tsts** (Train and test both on synthetic data)
-
 ```--normalize-data```: Apply sigmoid function to each value in the data
 
 ```--categorical```: If all attrbiutes of the data are categorical
