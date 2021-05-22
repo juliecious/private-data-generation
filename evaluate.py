@@ -28,6 +28,7 @@ from scipy.special import expit
 from xgboost import XGBRegressor
 
 from models import dp_wgan, pate_gan
+import sdv
 import argparse
 import numpy as np
 import pandas as pd
@@ -178,7 +179,7 @@ if opt.downstream_task == "classification":
     learners.append((MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=300, activation='relu', \
                                    solver='adam', random_state=42, early_stopping=True)))
 
-    print(f"\nEvaluate classifiers with testing mode {str(opt.test_mode)}:")
+    print(f"\nEvaluate classifiers:")
     for i in range(0, len(learners)):
         score = learners[i].fit(X_syn, y_syn)
         pred_probs = learners[i].predict_proba(X_test)
