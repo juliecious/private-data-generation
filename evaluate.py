@@ -71,6 +71,10 @@ noisy_sgd_parser.add_argument('--batch-size', type=int, default=64)
 
 subparsers = parser.add_subparsers(help="generative model type", dest="model")
 
+parser_real_data = subparsers.add_parser('real-data')
+
+parser_ct_gan = subparsers.add_parser('ct-gan')
+
 parser_pate_gan = subparsers.add_parser('pate-gan', parents=[privacy_parser])
 parser_pate_gan.add_argument('--lap-scale', type=float,
                              default=0.0001, help='Inverse laplace noise scale multiplier. A larger lap_scale will '
@@ -80,10 +84,6 @@ parser_pate_gan.add_argument('--num-teachers', type=int, default=10, help="Numbe
 parser_pate_gan.add_argument('--teacher-iters', type=int, default=5, help="Teacher iterations during training per generator iteration")
 parser_pate_gan.add_argument('--student-iters', type=int, default=5, help="Student iterations during training per generator iteration")
 parser_pate_gan.add_argument('--num-moments', type=int, default=100, help="Number of higher moments to use for epsilon calculation for pate-gan")
-
-parser_real_data = subparsers.add_parser('real-data')
-
-parser_ct_gan = subparsers.add_parser('ct-gan')
 
 parser_dp_wgan = subparsers.add_parser('dp-wgan', parents=[privacy_parser, noisy_sgd_parser])
 parser_dp_wgan.add_argument('--clamp-lower', type=float, default=-0.01, help="Clamp parameter for wasserstein GAN")
