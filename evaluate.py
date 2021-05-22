@@ -160,8 +160,9 @@ elif opt.model == 'ct-gan':
         from preprocessing.preprocess_cervical import convert_cervical
         syn_data = convert_cervical(syn_data)
     elif opt.dataset == 'seizure':
+        from preprocessing.preprocess_seizure import convert_seizure
+        syn_data = convert_seizure(syn_data)
 
-        syn_data
     X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
 elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
