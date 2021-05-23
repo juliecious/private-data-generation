@@ -93,7 +93,6 @@ parser_dp_wgan.add_argument('--clamp-upper', type=float, default=0.01, help="Cla
 opt = parser.parse_args()
 
 # Loading the data
-train_raw = pd.read_csv(opt.train_data_raw) # ctgan
 train = pd.read_csv(opt.train_data_path)
 test = pd.read_csv(opt.test_data_path)
 
@@ -150,6 +149,7 @@ elif opt.model == 'dp-wgan':
                                               5e-5, num_epochs=opt.num_epochs), private=opt.enable_privacy)
 
 elif opt.model == 'ct-gan':
+    train_raw = pd.read_csv(opt.train_data_raw)  # ctgan
     model = sdv.tabular.CTGAN()
     model.fit(train_raw)
 
