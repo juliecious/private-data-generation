@@ -40,7 +40,6 @@ parser.add_argument('--categorical', action='store_true', help='All attributes o
 parser.add_argument('--target-variable', help='Required if data has a target class')
 parser.add_argument('--train-data-path', required=True)
 parser.add_argument('--test-data-path', required=True)
-parser.add_argument('--dataset', help='For preprocessing of CTGAN generated data')
 parser.add_argument('--normalize-data', action='store_true', help='Apply sigmoid function to each value in the data')
 parser.add_argument('--disable-cuda', action='store_true', help='Disable CUDA')
 parser.add_argument('--downstream-task', default="classification", help='classification | regression')
@@ -74,6 +73,7 @@ subparsers = parser.add_subparsers(help="generative model type", dest="model")
 parser_real_data = subparsers.add_parser('real-data')
 
 parser_ct_gan = subparsers.add_parser('ct-gan')
+parser_ct_gan.add_argument('--train-data-raw', help='For raw train data of CTGAN generated data')
 
 parser_pate_gan = subparsers.add_parser('pate-gan', parents=[privacy_parser])
 parser_pate_gan.add_argument('--lap-scale', type=float,
@@ -92,6 +92,7 @@ parser_dp_wgan.add_argument('--clamp-upper', type=float, default=0.01, help="Cla
 opt = parser.parse_args()
 
 # Loading the data
+train_raw = pd.read_csv(opt.train_data_raw) # ctgan
 train = pd.read_csv(opt.train_data_path)
 test = pd.read_csv(opt.test_data_path)
 
@@ -149,7 +150,7 @@ elif opt.model == 'dp-wgan':
 
 elif opt.model == 'ct-gan':
     model = sdv.tabular.CTGAN()
-    model.fit(train)
+    model.fit(train_raw)
 
 # Generating synthetic data from the trained model
 if opt.model == 'real-data':
@@ -157,61 +158,15 @@ if opt.model == 'real-data':
     y_syn = y_train
 
 elif opt.model == 'ct-gan':
-    syn_data = model.sample(len(train))
-    print(f'syn_data generated: {syn_data.shape}')
-    print(syn_data.head())
+    syn_data = model.sample(len(train_raw))
 
-    # if opt.dataset == 'cervical':
-    #     from preprocessing.preprocess_cervical import convert_cervical
-    #     syn_data = convert_cervical(syn_data)
-    # elif opt.dataset == 'seizure':
-    #     from preprocessing.preprocess_seizure import convert_seizure
-    #     syn_data = convert_seizure(syn_data)
-    df = syn_data
-    df = df.replace('?', np.nan)
-    df = df.apply(pd.to_numeric)
+    if opt.dataset == 'cervical':
+        from preprocessing.preprocess_cervical import convert_cervical
+        syn_data = convert_cervical(syn_data)
+    elif opt.dataset == 'seizure':
+        from preprocessing.preprocess_seizure import convert_seizure
+        syn_data = convert_seizure(syn_data)
 
-    # Data Imputation
-    # for continuous variable
-    df['Number of sexual partners'] = df['Number of sexual partners'].fillna(df['Number of sexual partners'].median())
-    df['First sexual intercourse'] = df['First sexual intercourse'].fillna(df['First sexual intercourse'].median())
-    df['Num of pregnancies'] = df['Num of pregnancies'].fillna(df['Num of pregnancies'].median())
-    df['Smokes'] = df['Smokes'].fillna(1)
-    df['Smokes (years)'] = df['Smokes (years)'].fillna(df['Smokes (years)'].median())
-    df['Smokes (packs/year)'] = df['Smokes (packs/year)'].fillna(df['Smokes (packs/year)'].median())
-    df['Hormonal Contraceptives'] = df['Hormonal Contraceptives'].fillna(1)
-    df['Hormonal Contraceptives (years)'] = df['Hormonal Contraceptives (years)'].fillna(
-        df['Hormonal Contraceptives (years)'].median())
-    df['IUD'] = df['IUD'].fillna(0)  # Under suggestion
-    df['IUD (years)'] = df['IUD (years)'].fillna(0)  # Under suggestion
-    df['STDs'] = df['STDs'].fillna(1)
-    df['STDs (number)'] = df['STDs (number)'].fillna(df['STDs (number)'].median())
-    df['STDs:condylomatosis'] = df['STDs:condylomatosis'].fillna(df['STDs:condylomatosis'].median())
-    df['STDs:cervical condylomatosis'] = df['STDs:cervical condylomatosis'].fillna(
-        df['STDs:cervical condylomatosis'].median())
-    df['STDs:vaginal condylomatosis'] = df['STDs:vaginal condylomatosis'].fillna(
-        df['STDs:vaginal condylomatosis'].median())
-    df['STDs:vulvo-perineal condylomatosis'] = df['STDs:vulvo-perineal condylomatosis'].fillna(
-        df['STDs:vulvo-perineal condylomatosis'].median())
-    df['STDs:syphilis'] = df['STDs:syphilis'].fillna(df['STDs:syphilis'].median())
-    df['STDs:pelvic inflammatory disease'] = df['STDs:pelvic inflammatory disease'].fillna(
-        df['STDs:pelvic inflammatory disease'].median())
-    df['STDs:genital herpes'] = df['STDs:genital herpes'].fillna(df['STDs:genital herpes'].median())
-    df['STDs:molluscum contagiosum'] = df['STDs:molluscum contagiosum'].fillna(
-        df['STDs:molluscum contagiosum'].median())
-    df['STDs:AIDS'] = df['STDs:AIDS'].fillna(df['STDs:AIDS'].median())
-    df['STDs:HIV'] = df['STDs:HIV'].fillna(df['STDs:HIV'].median())
-    df['STDs:Hepatitis B'] = df['STDs:Hepatitis B'].fillna(df['STDs:Hepatitis B'].median())
-    df['STDs:HPV'] = df['STDs:HPV'].fillna(df['STDs:HPV'].median())
-    df['STDs: Time since first diagnosis'] = df['STDs: Time since first diagnosis'].fillna(
-        df['STDs: Time since first diagnosis'].median())
-    df['STDs: Time since last diagnosis'] = df['STDs: Time since last diagnosis'].fillna(
-        df['STDs: Time since last diagnosis'].median())
-
-    # for categorical variable
-    df = pd.get_dummies(data=df, columns=['Smokes', 'Hormonal Contraceptives', 'IUD', 'STDs',
-                                          'Dx:Cancer', 'Dx:CIN', 'Dx:HPV', 'Dx', 'Hinselmann', 'Citology', 'Schiller'])
-    syn_data = df
     X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
 elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':

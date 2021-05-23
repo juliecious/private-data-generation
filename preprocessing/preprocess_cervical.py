@@ -43,10 +43,13 @@ def convert_cervical(df):
     return df
 
 if __name__ == "__main__":
-    df = pd.read_csv('./data/risk_factors_cervical_cancer.csv')
-    df = convert_cervical(df)
-
+    df = pd.read_csv('https://archive.ics.uci.edu/ml/machine-learning-databases/00383/risk_factors_cervical_cancer.csv')
     train, test = train_test_split(df, test_size=0.2, random_state=42)
+
+    train.to_csv('./data/cervical_train.csv', index=False) # for ctgan
+
+    train = convert_cervical(train)
+    test = convert_cervical(test)
 
     train.to_csv('./data/cervical_processed_train.csv', index=False)
     test.to_csv('./data/cervical_processed_test.csv', index=False)
