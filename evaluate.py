@@ -73,6 +73,7 @@ subparsers = parser.add_subparsers(help="generative model type", dest="model")
 parser_real_data = subparsers.add_parser('real-data')
 
 parser_ct_gan = subparsers.add_parser('ct-gan')
+parser_ct_gan.add_argument('--dataset', help='For identifying which dataset is used in training')
 parser_ct_gan.add_argument('--train-data-raw', help='For raw train data of CTGAN generated data')
 
 parser_pate_gan = subparsers.add_parser('pate-gan', parents=[privacy_parser])
