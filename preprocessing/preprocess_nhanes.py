@@ -16,8 +16,8 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
-df_train = pd.read_csv('./data/diabetes_data_train.csv')
-df_test = pd.read_csv('./data/diabetes_data_test.csv')
+df_train = pd.read_csv('https://raw.githubusercontent.com/semerj/NHANES-diabetes/master/data/diabetes_data_train.csv')
+df_test = pd.read_csv('https://raw.githubusercontent.com/semerj/NHANES-diabetes/master/data/diabetes_data_test.csv')
 
 X_train = df_train.drop(['status'], axis=1)
 y_train = df_train.status
