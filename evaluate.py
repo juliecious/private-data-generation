@@ -168,7 +168,9 @@ elif opt.model == 'ct-gan':
         from preprocessing.preprocess_seizure import convert_seizure
         syn_data = convert_seizure(syn_data)
 
-    X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
+    X_syn = np.nan_to_num(syn_data.drop([opt.target_variable], axis=1).values)
+    y_syn = np.nan_to_num(syn_data[opt.target_variable].values)
+    # X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
 
 elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
     syn_data = model.generate(X_train.shape[0], class_ratios)
