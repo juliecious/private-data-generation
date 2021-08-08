@@ -28,7 +28,6 @@ from scipy.special import expit
 from xgboost import XGBRegressor
 
 from models import dp_wgan, pate_gan
-import sdv
 import argparse
 import numpy as np
 import pandas as pd
@@ -148,11 +147,6 @@ elif opt.model == 'dp-wgan':
                                               clip_coeff=opt.clip_coeff, sigma=opt.sigma, class_ratios=class_ratios, lr=
                                               5e-5, num_epochs=opt.num_epochs), private=opt.enable_privacy)
 
-elif opt.model == 'ct-gan':
-    train_raw = pd.read_csv(opt.train_data_raw)  # ctgan
-    model = sdv.tabular.CTGAN()
-    model.fit(train_raw)
-
 # Generating synthetic data from the trained model
 if opt.model == 'real-data':
     X_syn = X_train
@@ -185,17 +179,9 @@ roc_avg = 0
 prc_avg = 0
 if opt.downstream_task == "classification":
     learners.append((LogisticRegression(max_iter=1000)))
-    # learners.append((RandomForestClassifier()))
-    # learners.append((GaussianNB()))
-    # learners.append((BernoulliNB()))
     learners.append((DecisionTreeClassifier()))
-    # learners.append((LinearDiscriminantAnalysis()))
     learners.append((AdaBoostClassifier(n_estimators=50)))
     learners.append((MLPClassifier(hidden_layer_sizes=(50,))))
-    # learners.append((BaggingClassifier()))
-    # learners.append((GradientBoostingClassifier()))
-    # learners.append((MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=300, activation='relu', \
-    #                                solver='adam', random_state=42, early_stopping=True)))
 
     avg_acc, avg_f1, avg_auroc, avg_auprc, avg_ll = 0, 0, 0, 0, 0
     N = len(learners)
@@ -218,29 +204,6 @@ if opt.downstream_task == "classification":
 
     print(f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t '
           f'auroc {round(avg_auroc, 4):>5}\t auprc {round(avg_auprc, 4):>5}')
-
-        # score = learners[i].fit(X_syn, y_syn)
-        # pred_probs = learners[i].predict_proba(X_test)
-        # auc_score = roc_auc_score(y_test, pred_probs[:, 1])
-        # auprc = average_precision_score(y_test, pred_probs[:, 1])
-        # roc_avg += auc_score
-        # prc_avg += auprc
-        # print('-' * 60)
-        # print(f'{str(type(learners[i]).__name__):<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
-
-    # for model in [LinearSVC(max_iter=10000), XGBRegressor(random_state=42)]:
-    #     model.fit(X_syn, y_syn)
-    #     preds = model.predict(X_test)
-    #     auc_score = roc_auc_score(y_test, preds)
-    #     auprc = average_precision_score(y_test, preds)
-    #     roc_avg += auc_score
-    #     prc_avg += auprc
-    #     print('-' * 60)
-    #     print(f'{type(model).__name__:<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
-    #
-    # print('-' * 60)
-    # print(f'{"Average ":<30} auroc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
-
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
 
