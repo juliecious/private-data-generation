@@ -23,7 +23,7 @@ from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.naive_bayes import GaussianNB, BernoulliNB
 from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score
+from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score, accuracy_score, f1_score
 from scipy.special import expit
 from xgboost import XGBRegressor
 
@@ -188,13 +188,15 @@ if opt.downstream_task == "classification":
 
     print(f"\nEvaluate classifiers:")
     for i in range(N):
+        model = learners[i]
+        model.fit(X_syn, y_syn)
+        y_pred = model.predict(X_test)
         y_score = model.predict_proba(X_test)[:, 1]
         acc = accuracy_score(y_test, y_pred)
         f1 = f1_score(y_test, y_pred)
         auc_score = roc_auc_score(y_test, y_score)
         auprc = average_precision_score(y_test, y_score)
 
-        history[model_name] = {'acc': acc, 'f1': f1, 'auroc': auc_score, 'auprc': auprc}
         avg_acc += acc
         avg_f1 += f1
         avg_auroc += auc_score

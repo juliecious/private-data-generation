@@ -158,8 +158,8 @@ class PATE_GAN:
             # Calculate the current privacy cost
             epsilon = min((alpha - math.log(self.target_delta)) / l_list)
             if steps % 100 == 0:
-                print("Step : ", steps, "Loss SD : ", err_sd.item(), "Loss G : ", err_g.item(), "Epsilon : ",
-                      epsilon.item())
+                print("Step : ", steps, "Loss SD : ", round(err_sd.item(), 6),
+                      "Loss G : ", round(err_g.item(), 6), "Epsilon : ", round(epsilon.item(), 6))
 
             steps += 1
 
