@@ -1,7 +1,7 @@
 matplotlib
 networkx==2.0
 nose==1.3.7
-numpy
+numpy~=1.21.1
 pandas
 pytorch==1.8.0
 scikit-learn
@@ -10,3 +10,10 @@ wget
 xgboost
 sdv
 
+
+Pillow~=8.3.1
+pip~=21.1.2
+wheel~=0.36.2
+setuptools~=57.0.0
+six~=1.16.0
+python-dateutil~=2.8.2

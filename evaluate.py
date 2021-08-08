@@ -185,40 +185,61 @@ roc_avg = 0
 prc_avg = 0
 if opt.downstream_task == "classification":
     learners.append((LogisticRegression(max_iter=1000)))
-    learners.append((RandomForestClassifier()))
-    learners.append((GaussianNB()))
-    learners.append((BernoulliNB()))
+    # learners.append((RandomForestClassifier()))
+    # learners.append((GaussianNB()))
+    # learners.append((BernoulliNB()))
     learners.append((DecisionTreeClassifier()))
-    learners.append((LinearDiscriminantAnalysis()))
-    learners.append((AdaBoostClassifier(n_estimators=100)))
-    learners.append((BaggingClassifier()))
-    learners.append((GradientBoostingClassifier()))
-    learners.append((MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=300, activation='relu', \
-                                   solver='adam', random_state=42, early_stopping=True)))
+    # learners.append((LinearDiscriminantAnalysis()))
+    learners.append((AdaBoostClassifier(n_estimators=50)))
+    learners.append((MLPClassifier(hidden_layer_sizes=(50,))))
+    # learners.append((BaggingClassifier()))
+    # learners.append((GradientBoostingClassifier()))
+    # learners.append((MLPClassifier(hidden_layer_sizes=(150,100,50), max_iter=300, activation='relu', \
+    #                                solver='adam', random_state=42, early_stopping=True)))
+
+    avg_acc, avg_f1, avg_auroc, avg_auprc, avg_ll = 0, 0, 0, 0, 0
+    N = len(learners)
 
     print(f"\nEvaluate classifiers:")
-    for i in range(0, len(learners)):
-        score = learners[i].fit(X_syn, y_syn)
-        pred_probs = learners[i].predict_proba(X_test)
-        auc_score = roc_auc_score(y_test, pred_probs[:, 1])
-        auprc = average_precision_score(y_test, pred_probs[:, 1])
-        roc_avg += auc_score
-        prc_avg += auprc
-        print('-' * 60)
-        print(f'{str(type(learners[i]).__name__):<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+    for i in range(N):
+        y_score = model.predict_proba(X_test)[:, 1]
+        acc = accuracy_score(y_test, y_pred)
+        f1 = f1_score(y_test, y_pred)
+        auc_score = roc_auc_score(y_test, y_score)
+        auprc = average_precision_score(y_test, y_score)
 
-    for model in [LinearSVC(max_iter=10000), XGBRegressor(random_state=42)]:
-        model.fit(X_syn, y_syn)
-        preds = model.predict(X_test)
-        auc_score = roc_auc_score(y_test, preds)
-        auprc = average_precision_score(y_test, preds)
-        roc_avg += auc_score
-        prc_avg += auprc
-        print('-' * 60)
-        print(f'{type(model).__name__:<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+        history[model_name] = {'acc': acc, 'f1': f1, 'auroc': auc_score, 'auprc': auprc}
+        avg_acc += acc
+        avg_f1 += f1
+        avg_auroc += auc_score
+        avg_auprc += auprc
 
-    print('-' * 60)
-    print(f'{"Average ":<30} auroc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
+    avg_acc, avg_f1, avg_auroc, avg_auprc, avg_ll = avg_acc / N, avg_f1 / N, avg_auroc / N, avg_auprc / N, avg_ll / N
+
+    print(f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t '
+          f'auroc {round(avg_auroc, 4):>5}\t auprc {round(avg_auprc, 4):>5}')
+
+        # score = learners[i].fit(X_syn, y_syn)
+        # pred_probs = learners[i].predict_proba(X_test)
+        # auc_score = roc_auc_score(y_test, pred_probs[:, 1])
+        # auprc = average_precision_score(y_test, pred_probs[:, 1])
+        # roc_avg += auc_score
+        # prc_avg += auprc
+        # print('-' * 60)
+        # print(f'{str(type(learners[i]).__name__):<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+
+    # for model in [LinearSVC(max_iter=10000), XGBRegressor(random_state=42)]:
+    #     model.fit(X_syn, y_syn)
+    #     preds = model.predict(X_test)
+    #     auc_score = roc_auc_score(y_test, preds)
+    #     auprc = average_precision_score(y_test, preds)
+    #     roc_avg += auc_score
+    #     prc_avg += auprc
+    #     print('-' * 60)
+    #     print(f'{type(model).__name__:<30} auroc {round(auc_score, 4):>5}\t auprc {round(auprc, 4):>5}')
+    #
+    # print('-' * 60)
+    # print(f'{"Average ":<30} auroc {round(roc_avg / 12, 4)}\t auprc {round(prc_avg / 12, 4):>5}')
 
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
