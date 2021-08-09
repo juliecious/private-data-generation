@@ -152,20 +152,6 @@ if opt.model == 'real-data':
     X_syn = X_train
     y_syn = y_train
 
-elif opt.model == 'ct-gan':
-    syn_data = model.sample(len(train_raw))
-
-    if opt.dataset == 'cervical':
-        from preprocessing.preprocess_cervical import convert_cervical
-        syn_data = convert_cervical(syn_data)
-    elif opt.dataset == 'seizure':
-        from preprocessing.preprocess_seizure import convert_seizure
-        syn_data = convert_seizure(syn_data)
-
-    X_syn = np.nan_to_num(syn_data.drop([opt.target_variable], axis=1).values)
-    y_syn = np.nan_to_num(syn_data[opt.target_variable].values)
-    # X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
-
 elif opt.model == 'dp-wgan' or opt.model == 'pate-gan':
     syn_data = model.generate(X_train.shape[0], class_ratios)
     X_syn, y_syn = syn_data[:, :-1], syn_data[:, -1]
@@ -204,8 +190,14 @@ if opt.downstream_task == "classification":
 
     avg_acc, avg_f1, avg_auroc, avg_auprc, avg_ll = avg_acc / N, avg_f1 / N, avg_auroc / N, avg_auprc / N, avg_ll / N
 
-    print(f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t '
-          f'auroc {round(avg_auroc, 4):>5}\t auprc {round(avg_auprc, 4):>5}')
+    file = open('log.txt', 'w')
+    log = f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t ' \
+          f'auroc {round(avg_auroc, 4):>5}\t auprc {round(avg_auprc, 4):>5}'
+    file.writelines(log)
+    file.close()
+
+    print(log)
+
 else:
     names = ['Ridge', 'Lasso', 'ElasticNet', 'Bagging', 'MLP']
 
