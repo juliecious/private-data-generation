@@ -180,9 +180,9 @@ class DP_WGAN:
                 if epoch > hyperparams.num_epochs:
                     epsilon = np.inf
 
-            print("Epoch :", epoch, "Loss D real : ", round(err_d_real.mean(0).view(1).item(),6),
-                  "Loss D fake : ", round(err_d_fake.item(), 6), "Loss G : ", round(err_g.item(), 6),
-                  "Epsilon spent : ", round(epsilon, 6))
+            print("Epoch :", epoch, "\tLoss D real : ", round(err_d_real.mean(0).view(1).item(),6),
+                  "\tLoss D fake : ", round(err_d_fake.item(), 6), "\tLoss G : ", round(err_g.item(), 6),
+                  "\tEpsilon spent : ", round(epsilon, 6))
 
     def generate(self, num_rows, class_ratios, batch_size=1000):
         steps = num_rows // batch_size
