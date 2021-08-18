@@ -13,19 +13,14 @@
 # limitations under the License.
 #
 # evaluate.py is used to create the synthetic data generation and evaluation pipeline.
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, BaggingRegressor, AdaBoostClassifier, \
-    BaggingClassifier, GradientBoostingRegressor
-from sklearn.model_selection import train_test_split
+from sklearn.ensemble import BaggingRegressor, AdaBoostClassifier
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
-from sklearn.naive_bayes import GaussianNB, BernoulliNB
-from sklearn.svm import SVC, LinearSVC
+
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score, accuracy_score, f1_score
+from sklearn.metrics import roc_auc_score, mean_squared_error, average_precision_score, accuracy_score, f1_score, log_loss
 from scipy.special import expit
-from xgboost import XGBRegressor
 
 from models import dp_wgan, pate_gan
 import argparse
@@ -50,6 +45,7 @@ privacy_parser.add_argument('--target-epsilon', type=float, default=8, help='Eps
 privacy_parser.add_argument('--target-delta', type=float, default=1e-5, help='Delta differential privacy parameter')
 privacy_parser.add_argument('--save-synthetic', action='store_true', help='Save the synthetic data into csv')
 privacy_parser.add_argument('--output-data-path', help='Required if synthetic data needs to be saved')
+privacy_parser.add_argument('--multiclass', action='store_true', help='Multiclass classification task')
 
 noisy_sgd_parser = argparse.ArgumentParser(add_help=False)
 
@@ -177,22 +173,39 @@ if opt.downstream_task == "classification":
         model = learners[i]
         model.fit(X_syn, y_syn)
         y_pred = model.predict(X_test)
-        y_score = model.predict_proba(X_test)[:, 1]
-        acc = accuracy_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
-        auc_score = roc_auc_score(y_test, y_score)
-        auprc = average_precision_score(y_test, y_score)
 
-        avg_acc += acc
-        avg_f1 += f1
-        avg_auroc += auc_score
-        avg_auprc += auprc
+        if opt.multiclass:
+            y_score = model.predict_proba(X_test)
+            acc = accuracy_score(y_test, y_pred)
+            f1 = f1_score(y_test, y_pred, average='weighted')
+            auc_score = roc_auc_score(y_test, y_score, average="weighted", multi_class="ovr")
+            ll = log_loss(y_test, y_score)
+
+            avg_acc += acc
+            avg_f1 += f1
+            avg_auroc += auc_score
+            avg_ll += ll
+        else:
+            y_score = model.predict_proba(X_test)[:, 1]
+            acc = accuracy_score(y_test, y_pred)
+            f1 = f1_score(y_test, y_pred)
+            auc_score = roc_auc_score(y_test, y_score)
+            auprc = average_precision_score(y_test, y_score)
+
+            avg_acc += acc
+            avg_f1 += f1
+            avg_auroc += auc_score
+            avg_auprc += auprc
 
     avg_acc, avg_f1, avg_auroc, avg_auprc, avg_ll = avg_acc / N, avg_f1 / N, avg_auroc / N, avg_auprc / N, avg_ll / N
 
     file = open('log.txt', 'w')
-    log = f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t ' \
-          f'auroc {round(avg_auroc, 4):>5}\t auprc {round(avg_auprc, 4):>5}'
+    if opt.multiclass:
+        log = f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t ' \
+              f'auroc {round(avg_auroc, 4):>5}\t log loss {round(avg_ll, 4):>5}'
+    else:
+        log = f'Average: acc {round(avg_acc, 4):>5}\t f1 score {round(avg_f1, 4):>5}\t ' \
+              f'auroc {round(avg_auroc, 4):>5}\t auprc {round(avg_auprc, 4):>5}'
     file.writelines(log)
     file.close()
 
